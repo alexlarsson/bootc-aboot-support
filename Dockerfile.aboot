@@ -1,0 +1,68 @@
+# syntax=docker/dockerfile:1.7
+
+ARG FEDORA_VERSION=44
+ARG BASE_IMAGE=quay.io/fedora/fedora-bootc:${FEDORA_VERSION}
+ARG TEST_VERSION=1
+
+FROM ${BASE_IMAGE} AS rootfs
+ARG FEDORA_VERSION
+ARG TEST_VERSION
+ADD https://copr.fedorainfracloud.org/coprs/alexl/aboot-deploy/repo/fedora-${FEDORA_VERSION}/alexl-aboot-deploy-fedora-${FEDORA_VERSION}.repo /etc/yum.repos.d/aboot-deploy.repo
+COPY --chmod=0755 target/release/bootc aboot-support/build/image-builder /usr/bin/
+COPY systemd/bootc-aboot-reconcile.service /usr/lib/systemd/system/bootc-aboot-reconcile.service
+COPY aboot-support/kargs-aboot.d/ /usr/lib/bootc/kargs.d/
+COPY aboot-support/10-aboot-qemu.toml /usr/lib/bootc/install/10-aboot.toml
+COPY aboot-support/aboot.cfg /etc/aboot.cfg
+COPY aboot-support/disk-aboot.yaml /usr/lib/bootc-image-builder/disk.yaml
+COPY --chmod=0755 aboot-support/configure-test-image.sh aboot-support/update-disk-yaml.sh /tmp/
+RUN dnf -y --setopt=install_weak_deps=False install \
+        aboot-deploy aboot-update android-tools autosig-qemu-dtb kernel-tools && \
+    dnf clean all && \
+    rm -rf /usr/lib/efi/shim && \
+    systemctl enable aboot-gptctl-set-success.service && \
+    printf '\000' > /usr/lib/bootc-image-builder/vbmeta.img && \
+    /tmp/configure-test-image.sh "${TEST_VERSION}" && \
+    /tmp/update-disk-yaml.sh && \
+    rm /tmp/configure-test-image.sh /tmp/update-disk-yaml.sh && \
+    bootc --version
+LABEL containers.bootc="1"
+
+FROM rootfs AS split
+RUN mkdir -p /boot/.kernel && \
+    bootc container split-kernel-and-rootfs \
+        --rootfs / \
+        --output /boot/.kernel
+
+FROM scratch AS flattened
+COPY --from=split / /
+LABEL containers.bootc="1"
+CMD ["/sbin/init"]
+
+FROM rootfs AS aboot
+RUN --network=none \
+    --mount=type=bind,from=flattened,source=/,target=/target,ro <<'EOF'
+set -eux
+
+kver=$(ls /target/boot/.kernel)
+
+mkdir -p /out /work
+# Android's bootconfig helper updates the initramfs, so the extracted kernel
+# files must be writable rather than used directly from the read-only mount.
+cp -a "/target/boot/.kernel/${kver}" "/work/${kver}"
+# Current aboot-update misses libmagic's "EFI (application)" description and
+# otherwise embeds the EFI wrapper unchanged. Give it a raw ARM64 Image.
+unzboot "/work/${kver}/vmlinuz" "/work/${kver}/Image"
+mv "/work/${kver}/Image" "/work/${kver}/vmlinuz"
+bootc container aboot \
+    --rootfs /target \
+    --kernel-dir "/work/${kver}" \
+    --out /out \
+    --allow-missing-verity \
+    --write-dumpfile-to "/out/${kver}.dump"
+test -s "/out/aboot-${kver}.img"
+EOF
+
+FROM flattened
+RUN rm -rf /boot/.kernel
+COPY --from=aboot /out/ /boot/
+RUN bootc container lint --skip nonempty-boot

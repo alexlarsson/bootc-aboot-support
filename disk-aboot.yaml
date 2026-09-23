@@ -1,0 +1,38 @@
+mount_configuration: none
+partition_table:
+  partitions:
+  - attrs: [48, 49, 50, 51, 52, 53]
+    label: boot_a
+    payload:
+      source_path: "@ABOOT_IMAGE@"
+    payload_type: raw
+    size: '201326592'
+    type: 20117f86-e985-4357-b9ee-374bc1d8487d
+    uuid: 1dd3a986-997c-0c48-1d1b-b0d0399f3153
+  - attrs: [48, 50, 51, 52, 53]
+    label: boot_b
+    size: '201326592'
+    type: 20117f86-e985-4357-b9ee-374bc1d8487d
+    uuid: 45105095-3847-4657-51f2-2a0144550453
+  - label: vbmeta_a
+    payload:
+      source_path: /usr/lib/bootc-image-builder/vbmeta.img
+    payload_type: raw
+    size: '134217728'
+    type: 4b7a15d6-322c-42ac-8110-88b7da0c5d77
+    uuid: da91d469-09b3-ce43-795e-3b86f3735143
+  - label: vbmeta_b
+    size: '134217728'
+    type: 4b7a15d6-322c-42ac-8110-88b7da0c5d77
+    uuid: 305087ff-bf9a-910d-f3c4-606a8de7788a
+  - label: system_a
+    payload:
+      label: root
+      mountpoint: /
+      type: ext4
+      uuid: 76a22bf4-f153-4541-b6c7-0332c0dfaeac
+    payload_type: filesystem
+    type: b921b045-1df0-41c3-af44-4c6f280d3fae
+    uuid: 6264d520-3fb9-423f-8ab8-7a0a8e3d3562
+  size: '8589934592'
+  type: gpt

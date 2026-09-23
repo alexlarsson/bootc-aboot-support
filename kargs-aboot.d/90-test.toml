@@ -1,0 +1,1 @@
+kargs = ["root=LABEL=root", "rw", "acpi=off", "rd.modules-load=nvme,virtio_mmio", "ignore_loglevel", "console=ttyAMA0"]

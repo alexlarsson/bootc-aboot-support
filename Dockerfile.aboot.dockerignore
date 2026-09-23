@@ -1,0 +1,10 @@
+*
+!target/
+target/*
+!target/release/
+target/release/*
+!target/release/bootc
+!systemd/
+systemd/*
+!systemd/bootc-aboot-reconcile.service
+!aboot-support
