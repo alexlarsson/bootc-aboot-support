@@ -23,8 +23,8 @@ The real aboot image uses the `alexl/aboot-deploy` COPR for `aboot-deploy`,
 `aboot-update`, and `autosig-qemu-dtb`. Its `/etc/aboot.cfg` selects
 `aboot-gptctl` and `/usr/share/qemu/qemu-kvm.dtb`; its disk has Android
 `boot_a`/`boot_b`, `vbmeta_a`/`vbmeta_b`, and `system_a` partitions. The
-kernel arguments include `acpi=off`, and the install configuration selects
-bootloader `none`. There is no ESP. The ukiboot image keeps its separate
+kernel arguments include `acpi=off`, and bootc detects bootloader `none` from
+the Android boot payload. There is no ESP. The ukiboot image keeps its separate
 configuration.
 
 The image uses Fedora's kernel and userspace. The aarch64 kernel is extracted

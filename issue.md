@@ -76,7 +76,7 @@ binaries to the ESP partition. It will however not call bootupd.
 
 ## Tracking boot state
 
-Aboot state is tracked in `/sysroot/state/boot/aboot`. In particular, `$state/slot/[ab]`
+Aboot state is tracked in `/sysroot/state/boot/aboot`. In particular, `$state/slots/[ab]`
 contains the current digest that was seen booted in a particular slot, and acts as a GC
 root to ensure these slots keep booting. This state is updated by the
 `bootc-aboot-reconcile.service` as soon as the state directory is available. We never
@@ -120,8 +120,8 @@ read. Maybe by having the reconcile service fail?
 
 In the (weird) case that we boot and there is a pending update, but no attempt file that
 means we haven't tried to do the update yet, perhaps due to a power-failure. In this case
-we currently restore the transient staged update which will be restored on the next
-boot. (Not actually sure this is the correct approach though.)
+we currently restore the persistend update as a transient state which will be applie at
+shutdown. (Not actually sure this is the correct approach though.)
 
 We also support `bootc rollback`, but that behaves differently. It just asks
 `aboot-deploy` to change the active slot, and we will boot the old slot/deployment on the

@@ -11,7 +11,6 @@ ADD https://copr.fedorainfracloud.org/coprs/alexl/aboot-deploy/repo/fedora-${FED
 COPY --chmod=0755 target/release/bootc aboot-support/build/image-builder /usr/bin/
 COPY systemd/bootc-aboot-reconcile.service /usr/lib/systemd/system/bootc-aboot-reconcile.service
 COPY aboot-support/kargs-aboot.d/ /usr/lib/bootc/kargs.d/
-COPY aboot-support/10-aboot-qemu.toml /usr/lib/bootc/install/10-aboot.toml
 COPY aboot-support/aboot.cfg /etc/aboot.cfg
 COPY aboot-support/disk-aboot.yaml /usr/lib/bootc-image-builder/disk.yaml
 COPY --chmod=0755 aboot-support/configure-test-image.sh aboot-support/update-disk-yaml.sh /tmp/
