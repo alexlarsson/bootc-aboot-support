@@ -56,6 +56,9 @@ containers-uki-build: tools (_build-container "uki" "")
 
 containers-uki: tools (_test-container "uki" "")
 
+# Build the v2 ukiboot target container.
+containers-uki-v2: tools (_test-container "uki" "2")
+
 # Rebuild containers and create the ukiboot raw disk.
 ukiboot: containers-ukiboot-build containers-ukiboot disk-ukiboot
 
@@ -70,6 +73,8 @@ aboot-update-test: aboot archive-aboot-v2
 
 # Rebuild containers and create the conventional UKI raw disk.
 uki: containers-uki-build containers-uki disk-uki
+
+uki-update-test: uki containers-uki-v2
 
 # Create the ukiboot disk from existing containers.
 disk-ukiboot: (_disk "ukiboot")
