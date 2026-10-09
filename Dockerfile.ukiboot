@@ -18,6 +18,7 @@ RUN dnf -y --setopt=install_weak_deps=False install \
         aboot-deploy aboot-update systemd-ukify systemd-boot ukiboot && \
     dnf clean all && \
     /tmp/configure-test-image.sh "${TEST_VERSION}" && \
+    systemctl enable ukiboot-set-success.service && \
     /tmp/update-disk-yaml.sh && \
     rm /tmp/configure-test-image.sh /tmp/update-disk-yaml.sh && \
     bootc --version

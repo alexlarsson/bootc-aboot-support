@@ -35,5 +35,5 @@ partition_table:
     payload_type: filesystem
     type: 4f68bce3-e8cd-4db1-96e7-fbcaf984b709
     uuid: 6264d520-3fb9-423f-8ab8-7a0a8e3d3562
-  size: '8589934592'
+  size: '17179869184'
   type: gpt

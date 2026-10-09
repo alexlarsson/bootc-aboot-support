@@ -27,6 +27,17 @@ kernel arguments include `acpi=off`, and bootc detects bootloader `none` from
 the Android boot payload. There is no ESP. The ukiboot image keeps its separate
 configuration.
 
+The ukiboot fixture enables `ukiboot-set-success.service` to mark successful
+boots and uses a 16 GiB disk layout to leave room for the OCI update archive
+and staged deployment. On an x86 KVM host, run it with:
+
+```sh
+/vcs/tyt/automotive-image-builder/bin/air --nographics --memory 4G --publish-dir output output/ukiboot/bootc-fedora-44-raw-x86_64.raw
+```
+
+The published archive is available in the guest at
+`http://10.0.2.100/bootc-ukiboot-test-v2.oci-archive`.
+
 The image uses Fedora's kernel and userspace. The aarch64 kernel is extracted
 from its EFI wrapper before `aboot-update` builds the Android image. This needs
 the QEMU U-Boot build with a 128 MiB `CONFIG_SYS_BOOTM_LEN`; the stock 64 MiB
