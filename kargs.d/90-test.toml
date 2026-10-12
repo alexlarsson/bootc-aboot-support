@@ -1,1 +1,1 @@
-kargs = ["root=LABEL=root", "rw", "ignore_loglevel", "console=ttyS0"]
+kargs = ["root=gpt-auto", "rw", "ignore_loglevel", "console=ttyS0"]

@@ -65,6 +65,12 @@ ukiboot: containers-ukiboot-build containers-ukiboot disk-ukiboot
 # Create a v1 disk and a v2 OCI archive for an update test.
 ukiboot-update-test: ukiboot archive-ukiboot-v2
 
+# Rebuild the ukiboot container and install it with bcvk.
+ukiboot-bcvk: containers-ukiboot-v1 disk-ukiboot-bcvk
+
+# Create a bcvk disk and a v2 OCI archive for an update test.
+ukiboot-bcvk-update-test: ukiboot-bcvk archive-ukiboot-v2
+
 # Rebuild containers and create the real aboot raw disk.
 aboot: containers-aboot-build containers-aboot disk-aboot
 
@@ -78,6 +84,15 @@ uki-update-test: uki containers-uki-v2
 
 # Create the ukiboot disk from existing containers.
 disk-ukiboot: (_disk "ukiboot")
+
+# Install the existing ukiboot container using bootc's default repart layout.
+disk-ukiboot-bcvk:
+    mkdir -p output/ukiboot-bcvk/install-logs
+    bcvk to-disk \
+        --filesystem ext4 --disk-size 16G \
+        --log-dir journal,console=output/ukiboot-bcvk/install-logs \
+        localhost/bootc-ukiboot-test:v1 output/ukiboot-bcvk/disk.raw \
+        2>&1 | tee output/ukiboot-bcvk/install.log
 
 # Create the real aboot disk from existing containers.
 disk-aboot: (_disk "aboot")

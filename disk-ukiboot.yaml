@@ -26,9 +26,8 @@ partition_table:
     size: '1048576'
     type: fefd9070-346f-4c9a-85e6-17f07f922773
     uuid: 5A6F3ADE-EEB0-11EF-A838-E89C256C3906
-  - label: root
+  - label: root-x86-64
     payload:
-      label: root
       mountpoint: /
       type: ext4
       uuid: 76a22bf4-f153-4541-b6c7-0332c0dfaeac
